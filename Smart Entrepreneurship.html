@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פלטפורמת יזמות | ניהול פרויקטים</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --danger: #f72585;
+            --success: #4cc9f0;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+        }
+        
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        padding-top: 80px;
+        color: var(--dark);
+        direction: rtl;
+    }
+    
+    .navbar {
+        position: fixed;
+        top: 0;
+        width: 100%;
+        background-color: white;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: center;
+        padding: 0 20px;
+        z-index: 1000;
+    }
+    
+    .nav-container {
+        display: flex;
+        max-width: 1200px;
+        width: 100%;
+    }
+    
+    .nav-link {
+        color: var(--gray);
+        text-decoration: none;
+        font-weight: 600;
+        padding: 20px 25px;
+        transition: all 0.3s ease;
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .nav-link i {
+        font-size: 1.1rem;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+        color: var(--primary);
+    }
+    
+    .nav-link.active::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 25px;
+        left: 25px;
+        height: 3px;
+        background-color: var(--primary);
+        border-radius: 3px 3px 0 0;
+    }
+    
+    .tab-content {
+        display: none;
+        background-color: white;
+        margin: 20px auto;
+        padding: 30px;
+        border-radius: 12px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+        max-width: 1000px;
+        width: 95%;
+        animation: fadeIn 0.4s ease;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .tab-content.active {
+        display: block;
+    }
+    
+    h1 {
+        color: var(--primary);
+        margin-bottom: 25px;
+        text-align: center;
+        font-size: 2rem;
+        position: relative;
+        padding-bottom: 10px;
+    }
+    
+    h1::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        right: 50%;
+        transform: translateX(50%);
+        width: 80px;
+        height: 3px;
+        background-color: var(--accent);
+        border-radius: 3px;
+    }
+    
+    .btn {
+        background-color: var(--primary);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        margin: 5px;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        box-shadow: 0 4px 6px rgba(67, 97, 238, 0.2);
+    }
+    
+    .btn:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(67, 97, 238, 0.25);
+    }
+    
+    .btn:active {
+        transform: translateY(0);
+    }
+    
+    .btn-outline {
+        background-color: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+        box-shadow: none;
+    }
+    
+    .btn-outline:hover {
+        background-color: var(--primary);
+        color: white;
+    }
+    
+    .btn-stop {
+        background-color: var(--danger);
+        box-shadow: 0 4px 6px rgba(247, 37, 133, 0.2);
+    }
+    
+    .btn-stop:hover {
+        background-color: #e3176a;
+        box-shadow: 0 6px 12px rgba(247, 37, 133, 0.25);
+    }
+    
+    .btn-success {
+        background-color: var(--success);
+        box-shadow: 0 4px 6px rgba(76, 201, 240, 0.2);
+    }
+    
+    .btn-success:hover {
+        background-color: #3ab7d8;
+        box-shadow: 0 6px 12px rgba(76, 201, 240, 0.25);
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: var(--dark);
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 12px 16px;
+        border: 2px solid var(--light-gray);
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+    }
+    
+    .list {
+        max-height: 400px;
+        overflow-y: auto;
+        border: 2px solid var(--light-gray);
+        border-radius: 8px;
+        padding: 0;
+        margin: 25px 0;
+    }
+    
+    .list-item {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--light-gray);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.2s;
+    }
+    
+    .list-item:last-child {
+        border-bottom: none;
+    }
+    
+    .list-item:hover {
+        background-color: #f8f9fa;
+    }
+    
+    .badge {
+        display: inline-block;
+        padding: 4px 10px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    .badge-primary {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+    }
+    
+    .badge-success {
+        background-color: rgba(76, 201, 240, 0.1);
+        color: var(--success);
+    }
+    
+    .badge-danger {
+        background-color: rgba(247, 37, 133, 0.1);
+        color: var(--danger);
+    }
+    
+    .total {
+        font-weight: bold;
+        font-size: 1.2rem;
+        text-align: left;
+        margin-top: 15px;
+        padding: 15px;
+        background-color: var(--light);
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    .alert {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background-color: var(--success);
+        color: white;
+        padding: 20px 40px;
+        border-radius: 8px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        z-index: 2000;
+        display: none;
+        font-weight: 600;
+        animation: alertIn 0.3s ease;
+    }
+    
+    @keyframes alertIn {
+        from { opacity: 0; transform: translate(-50%, -40%); }
+        to { opacity: 1; transform: translate(-50%, -50%); }
+    }
+    
+    .resource-link {
+        display: flex;
+        align-items: center;
+        padding: 18px 25px;
+        margin: 12px 0;
+        background-color: white;
+        border-radius: 8px;
+        text-decoration: none;
+        color: var(--dark);
+        font-weight: 600;
+        transition: all 0.3s;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        border-left: 5px solid var(--primary);
+    }
+    
+    .resource-link i {
+        margin-left: 15px;
+        font-size: 1.5rem;
+        color: var(--primary);
+    }
+    
+    .resource-link:hover {
+        transform: translateX(-5px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .empty-state {
+        text-align: center;
+        padding: 40px 20px;
+        color: var(--gray);
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: var(--light-gray);
+    }
+    
+    .freelancer-card {
+        background-color: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s;
+    }
+    
+    .freelancer-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    }
+    
+    .freelancer-header {
+        display: flex;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+    
+    .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background-color: var(--light-gray);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 15px;
+        font-weight: bold;
+        color: var(--primary);
+        font-size: 1.2rem;
+    }
+    
+    .freelancer-info h3 {
+        margin-bottom: 5px;
+        color: var(--dark);
+    }
+    
+    .freelancer-info p {
+        color: var(--gray);
+        font-size: 0.9rem;
+    }
+    
+    .skills {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 15px;
+    }
+    
+    .skill-tag {
+        background-color: rgba(67, 97, 238, 0.1);
+        color: var(--primary);
+        padding: 4px 12px;
+        border-radius: 50px;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+    
+    @media (max-width: 768px) {
+        .navbar {
+            padding: 0;
+            overflow-x: auto;
+            white-space: nowrap;
+            justify-content: flex-start;
+        }
+        
+        .nav-container {
+            padding: 0 10px;
+        }
+        
+        .nav-link {
+            padding: 15px 20px;
+            font-size: 0.9rem;
+        }
+        
+        .nav-link i {
+            font-size: 1rem;
+        }
+        
+        .tab-content {
+            padding: 20px 15px;
+        }
+        
+        h1 {
+            font-size: 1.5rem;
+        }
+    }
+    
+    @keyframes pulse {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+        100% { transform: scale(1); }
+    }
+    
+    .pulse {
+        animation: pulse 2s infinite;
+    }
+
+    /* Unique styles for sophisticated freelancer search */
+    .option-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+    
+    .option-card {
+        background-color: var(--light);
+        padding: 15px;
+        border-radius: 8px;
+        transition: all 0.3s;
+        cursor: pointer;
+        border: 2px solid var(--light-gray);
+    }
+    
+    .option-card:hover {
+        border-color: var(--primary);
+        transform: translateY(-3px);
+        box-shadow: 0 4px 12px rgba(67, 97, 238, 0.2);
+    }
+    
+    .option-card.selected {
+        border-color: var(--primary);
+        background-color: rgba(67, 97, 238, 0.1);
+    }
+    
+    .option-card i {
+        font-size: 1.5rem;
+        color: var(--primary);
+        margin-bottom: 10px;
+    }
+</style>
+
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="nav-link active" data-tab="reminders">
+                <i class="fas fa-bell"></i>
+                תזכורות ומוטיבציה
+            </a>
+            <a href="#" class="nav-link" data-tab="budget">
+                <i class="fas fa-wallet"></i>
+                ניהול תקציב
+            </a>
+            <a href="#" class="nav-link" data-tab="freelancers">
+                <i class="fas fa-search"></i>
+                חיפוש פרילנסרים
+            </a>
+            <a href="#" class="nav-link" data-tab="resources">
+                <i class="fas fa-link"></i>
+                משאבים
+            </a>
+        </div>
+    </nav>
+    
+
+<div class="alert" id="alert"></div>
+
+<div class="tab-content active" id="reminders">
+    <h1><i class="fas fa-bell"></i> תזכורות ומוטיבציה</h1>
+    
+    <div class="form-group">
+        <label for="reminder-frequency"><i class="fas fa-clock"></i> תדירות תזכורת:</label>
+        <select id="reminder-frequency" class="form-control">
+            <option value="hourly">שעתית</option>
+            <option value="daily">יומית</option>
+            <option value="weekly">שבועית</option>
+        </select>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin: 20px 0;">
+        <button class="btn pulse" id="start-reminders">
+            <i class="fas fa-play"></i> התחל תזכורות
+        </button>
+        <button class="btn btn-stop" id="stop-reminders">
+            <i class="fas fa-stop"></i> עצור תזכורות
+        </button>
+    </div>
+    
+    <div style="margin-top: 40px; text-align: center; padding: 30px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 10px;">
+        <h3 style="margin-bottom: 20px; color: var(--primary);">
+            <i class="fas fa-quote-left"></i> ציטוט מוטיבציה יומי <i class="fas fa-quote-right"></i>
+        </h3>
+        <p id="motivation-quote" style="font-size: 1.2rem; line-height: 1.6; margin-bottom: 25px;">"הדרך להצלחה מתחילה בצעד הראשון."</p>
+        <button class="btn btn-success" id="new-quote">
+            <i class="fas fa-sync-alt"></i> ציטוט חדש
+        </button>
+    </div>
+</div>
+
+<div class="tab-content" id="budget">
+    <h1><i class="fas fa-wallet"></i> ניהול תקציב</h1>
+    
+    <form id="expense-form">
+        <div class="form-group">
+            <label for="expense-name"><i class="fas fa-tag"></i> שם ההוצאה:</label>
+            <input type="text" id="expense-name" class="form-control" required placeholder="לדוגמה: פרסום בפייסבוק">
+        </div>
+        
+        <div class="form-group">
+            <label for="expense-amount"><i class="fas fa-shekel-sign"></i> סכום (₪):</label>
+            <input type="number" id="expense-amount" class="form-control" min="0" step="0.01" required placeholder="לדוגמה: 500">
+        </div>
+        
+        <div class="form-group">
+            <label for="expense-category"><i class="fas fa-folder"></i> קטגוריה:</label>
+            <select id="expense-category" class="form-control" required>
+                <option value="" disabled selected>בחר קטגוריה</option>
+                <option value="marketing">שיווק</option>
+                <option value="development">פיתוח</option>
+                <option value="design">עיצוב</option>
+                <option value="office">משרד</option>
+                <option value="other">אחר</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn">
+            <i class="fas fa-plus"></i> הוסף הוצאה
+        </button>
+    </form>
+    
+    <div class="list" id="expenses-list">
+        <div class="empty-state">
+            <i class="fas fa-receipt"></i>
+            <h3>אין הוצאות להצגה</h3>
+            <p>הוסף הוצאה ראשונה כדי להתחיל</p>
+        </div>
+    </div>
+    
+    <div class="total" id="total-expenses">
+        <span>סה"כ הוצאות:</span>
+        <span>₪0.00</span>
+    </div>
+</div>
+
+<div class="tab-content" id="freelancers">
+    <h1><i class="fas fa-search"></i> חיפוש פרילנסרים מתקדם</h1>
+    
+    <div class="form-group">
+        <label><i class="fas fa-tasks"></i> בחר את סוג השירות שאתה צריך:</label>
+        <div class="option-grid" id="service-options">
+            <div class="option-card" data-service="design">
+                <i class="fas fa-paint-brush"></i>
+                <p>עיצוב גרפי</p>
+            </div>
+            <div class="option-card" data-service="development">
+                <i class="fas fa-code"></i>
+                <p>פיתוח אתרים/תוכנה</p>
+            </div>
+            <div class="option-card" data-service="marketing">
+                <i class="fas fa-bullhorn"></i>
+                <p>שיווק דיגיטלי</p>
+            </div>
+            <div class="option-card" data-service="writing">
+                <i class="fas fa-pen"></i>
+                <p>כתיבה ועריכה</p>
+            </div>
+            <div class="option-card" data-service="other">
+                <i class="fas fa-question"></i>
+                <p>אחר</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-group">
+        <label for="project-details"><i class="fas fa-info-circle"></i> פרטים נוספים על הפרויקט:</label>
+        <textarea id="project-details" class="form-control" rows="3" placeholder="תאר את הפרויקט שלך (לדוגמה: אני צריך לוגו מודרני לעסק חדש)"></textarea>
+    </div>
+    
+    <div class="form-group">
+        <label for="project-budget"><i class="fas fa-shekel-sign"></i> תקציב משוער (₪):</label>
+        <input type="number" id="project-budget" class="form-control" min="0" step="1" placeholder="לדוגמה: 1000">
+    </div>
+    
+    <div class="form-group">
+        <label for="project-timeline"><i class="fas fa-calendar-alt"></i> זמן משוער לביצוע:</label>
+        <select id="project-timeline" class="form-control">
+            <option value="urgent">דחוף (עד שבוע)</option>
+            <option value="short">קצר (1-2 שבועות)</option>
+            <option value="medium">בינוני (3-4 שבועות)</option>
+            <option value="long">ארוך (חודש ומעלה)</option>
+        </select>
+    </div>
+    
+    <div style="display: flex; gap: 10px; margin-top: 20px;">
+        <button class="btn" id="generate-links">
+            <i class="fas fa-link"></i> צור קישורי חיפוש
+        </button>
+        <button class="btn btn-outline" id="reset-form">
+            <i class="fas fa-undo"></i> אפס
+        </button>
+    </div>
+    
+    <div id="search-results" style="margin-top: 20px;"></div>
+</div>
+
+<div class="tab-content" id="resources">
+    <h1><i class="fas fa-link"></i> משאבים שימושיים</h1>
+    
+    <p style="margin-bottom: 20px; color: var(--gray);">אוסף קישורים שימושיים ליזמים ולמנהלי פרויקטים:</p>
+    
+    <a href="https://www.fiverr.com/" class="resource-link" target="_blank">
+        <i class="fab fa-fiverr"></i>
+        <span>Fiverr - מצא פרילנסרים לכל משימה</span>
+    </a>
+    
+    <a href="https://www.upwork.com/" class="resource-link" target="_blank">
+        <i class="fab fa-upwork"></i>
+        <span>Upwork - פלטפורמת פרילנסרים גלובלית</span>
+    </a>
+    
+    <a href="https://trello.com/" class="resource-link" target="_blank">
+        <i class="fab fa-trello"></i>
+        <span>Trello - כלי לניהול פרויקטים</span>
+    </a>
+    
+    <a href="https://www.notion.so/" class="resource-link" target="_blank">
+        <i class="fas fa-book"></i>
+        <span>Notion - כלי לארגון ועבודה</span>
+    </a>
+    
+    <a href="https://www.linkedin.com/" class="resource-link" target="_blank">
+        <i class="fab fa-linkedin"></i>
+        <span>LinkedIn - רשת מקצועית</span>
+    </a>
+    
+    <a href="https://github.com/" class="resource-link" target="_blank">
+        <i class="fab fa-github"></i>
+        <span>GitHub - אירוח קוד ופרויקטים</span>
+    </a>
+    
+    <a href="https://www.producthunt.com/" class="resource-link" target="_blank">
+        <i class="fas fa-rocket"></i>
+        <span>Product Hunt - הצגת מוצרים חדשים</span>
+    </a>
+</div>
+
+<script>
+    // Tab Navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            this.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(tabId).classList.add('active');
+            if (tabId === 'budget') renderExpenses();
+            if (tabId === 'freelancers') resetFreelancerForm();
+        });
+    });
+
+    // Reminders & Motivation
+    const motivationQuotes = [
+        "הצלחה היא מסע, לא יעד. - אריק גריטי",
+        "הדרך הטובה ביותר לחזות את העתיד היא ליצור אותו. - אברהם לינקולן",
+        "אל תחכה לרגע המושלם, קח את הרגע ועשה אותו מושלם. - זיג זיגלר",
+        "כישלון הוא רק הזדמנות להתחיל מחדש בצורה חכמה יותר. - הנרי פורד",
+        "הדברים הקשים ביותר הם אלה ששווים ביותר. - סיימון סינק",
+        "התחל איפה שאתה, השתמש במה שיש לך, עשה מה שאתה יכול. - ארתור אש",
+        "הצלחה היא סכום של מאמצים קטנים שחוזרים על עצמם יום אחר יום. - רוברט קולייר",
+        "הדרך היחידה לעשות עבודה מעולה היא לאהוב את מה שאתה עושה. - סטיב ג'ובס",
+        "הזדמנויות לא קורות, אתה יוצר אותן. - כריס גרוסר",
+        "אל תפחד לוותר על הטוב כדי להגיע למצוין. - ג'ון ד. רוקפלר",
+        "ההבדל בין אנשים מצליחים לאחרים הוא לא חוסר בכוח, אלא חוסר ברצון. - וינס לומברדי",
+        "הצלחה היא לא סופית, כישלון הוא לא קטלני: מה שחשוב זה האומץ להמשיך. - וינסטון צ'רצ'יל"
+    ];
+    
+    let reminderInterval = null;
+    const alertBox = document.getElementById('alert');
+    
+    document.getElementById('start-reminders').addEventListener('click', function() {
+        const frequency = document.getElementById('reminder-frequency').value;
+        let interval, message;
+        switch(frequency) {
+            case 'hourly':
+                interval = 3600000;
+                message = 'תזכורת שעתית: זמן להתקדם בפרויקט!';
+                break;
+            case 'daily':
+                interval = 86400000;
+                message = 'תזכורת יומית: תכנן את היום שלך!';
+                break;
+            case 'weekly':
+                interval = 604800000;
+                message = 'תזכורת שבועית: סכם את השבוע!';
+                break;
+            default:
+                interval = 3600000;
+                message = 'תזכורת: המשך לעבוד על המטרות שלך!';
+        }
+        if (reminderInterval) clearInterval(reminderInterval);
+        showAlert(message);
+        reminderInterval = setInterval(() => {
+            showAlert(message);
+            const randomIndex = Math.floor(Math.random() * motivationQuotes.length);
+            document.getElementById('motivation-quote').textContent = motivationQuotes[randomIndex];
+        }, interval);
+        this.classList.add('pulse');
+        showAlert('תזכורות הופעלו!');
+    });
+    
+    document.getElementById('stop-reminders').addEventListener('click', function() {
+        if (reminderInterval) {
+            clearInterval(reminderInterval);
+            reminderInterval = null;
+            document.getElementById('start-reminders').classList.remove('pulse');
+            showAlert('תזכורות הופסקו');
+        } else {
+            showAlert('אין תזכורות פעילות כרגע');
+        }
+    });
+    
+    document.getElementById('new-quote').addEventListener('click', function() {
+        const randomIndex = Math.floor(Math.random() * motivationQuotes.length);
+        document.getElementById('motivation-quote').textContent = motivationQuotes[randomIndex];
+        this.innerHTML = '<i class="fas fa-check"></i> ציטוט חדש נטען';
+        setTimeout(() => this.innerHTML = '<i class="fas fa-sync-alt"></i> ציטוט חדש', 1500);
+        showAlert('ציטוט חדש נטען!');
+    });
+    
+    function showAlert(message) {
+        alertBox.textContent = message;
+        alertBox.style.display = 'block';
+        setTimeout(() => alertBox.style.display = 'none', 3000);
+    }
+
+    // Budget Management
+    let expenses = JSON.parse(localStorage.getItem('website_expenses')) || [];
+    
+    document.getElementById('expense-form').addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = document.getElementById('expense-name').value.trim();
+        const amount = parseFloat(document.getElementById('expense-amount').value);
+        const category = document.getElementById('expense-category').value;
+        
+        if (!name || isNaN(amount) || amount <= 0 || !category) {
+            showAlert('אנא מלא את כל השדות עם ערכים תקינים (סכום חיובי)');
+            return;
+        }
+        
+        const expense = {
+            id: Date.now(),
+            name,
+            amount,
+            category,
+            date: new Date().toLocaleDateString('he-IL')
+        };
+        
+        expenses.push(expense);
+        localStorage.setItem('website_expenses', JSON.stringify(expenses));
+        renderExpenses();
+        
+        this.reset();
+        document.getElementById('expense-category').value = '';
+        const submitBtn = this.querySelector('button[type="submit"]');
+        submitBtn.innerHTML = '<i class="fas fa-check"></i> הוצאה נוספה';
+        setTimeout(() => submitBtn.innerHTML = '<i class="fas fa-plus"></i> הוסף הוצאה', 1500);
+        showAlert('הוצאה נוספה בהצלחה!');
+    });
+    
+    function renderExpenses() {
+        const expensesList = document.getElementById('expenses-list');
+        const totalExpenses = document.getElementById('total-expenses');
+        expensesList.innerHTML = '';
+        
+        if (expenses.length === 0) {
+            expensesList.innerHTML = `
+                <div class="empty-state">
+                    <i class="fas fa-receipt"></i>
+                    <h3>אין הוצאות להצגה</h3>
+                    <p>הוסף הוצאה ראשונה כדי להתחיל</p>
+                </div>
+            `;
+            totalExpenses.innerHTML = '<span>סה"כ הוצאות:</span><span>₪0.00</span>';
+            return;
+        }
+        
+        let total = 0;
+        expenses.forEach(expense => {
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.innerHTML = `
+                <div>
+                    <strong>${expense.name}</strong>
+                    <div style="color: #6c757d; font-size: 0.8rem; margin-top: 4px;">
+                        ${expense.date} | <span class="badge ${getCategoryClass(expense.category)}">${getCategoryName(expense.category)}</span>
+                    </div>
+                </div>
+                <div>₪${expense.amount.toFixed(2)}</div>
+            `;
+            expensesList.appendChild(item);
+            total += expense.amount;
+        });
+        
+        totalExpenses.innerHTML = `<span>סה"כ הוצאות:</span><span>₪${total.toFixed(2)}</span>`;
+    }
+    
+    function getCategoryName(category) {
+        const categories = {
+            'marketing': 'שיווק',
+            'development': 'פיתוח',
+            'design': 'עיצוב',
+            'office': 'משרד',
+            'other': 'אחר'
+        };
+        return categories[category] || 'אחר';
+    }
+    
+    function getCategoryClass(category) {
+        const classes = {
+            'marketing': 'badge-primary',
+            'development': 'badge-success',
+            'design': 'badge-danger',
+            'office': 'badge-primary',
+            'other': 'badge-success'
+        };
+        return classes[category] || 'badge-success';
+    }
+
+    // Sophisticated Freelancer Search
+    let selectedService = null;
+    
+    document.querySelectorAll('.option-card').forEach(card => {
+        card.addEventListener('click', function() {
+            document.querySelectorAll('.option-card').forEach(c => c.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedService = this.getAttribute('data-service');
+        });
+    });
+    
+    document.getElementById('generate-links').addEventListener('click', function() {
+        const details = document.getElementById('project-details').value.trim();
+        const budget = document.getElementById('project-budget').value.trim();
+        const timeline = document.getElementById('project-timeline').value;
+        
+        if (!selectedService || !details) {
+            showAlert('אנא בחר שירות ותאר את הפרויקט שלך');
+            return;
+        }
+        
+        const professionalDescription = generateProfessionalDescription(selectedService, details, budget, timeline);
+        const searchResults = document.getElementById('search-results');
+        searchResults.innerHTML = `
+            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px; border-radius: 10px; margin-bottom: 20px;">
+                <h3 style="color: var(--primary); margin-bottom: 15px;"><i class="fas fa-file-alt"></i> תיאור מקצועי:</h3>
+                <p style="font-size: 1.1rem; line-height: 1.6;">${professionalDescription}</p>
+            </div>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <a href="${generateLink('upwork', professionalDescription, budget)}" target="_blank" class="btn btn-outline">
+                    <i class="fab fa-upwork"></i> חפש ב-Upwork
+                </a>
+                <a href="${generateLink('fiverr', professionalDescription, budget)}" target="_blank" class="btn btn-outline">
+                    <i class="fab fa-fiverr"></i> חפש ב-Fiverr
+                </a>
+            </div>
+        `;
+        this.innerHTML = '<i class="fas fa-check"></i> קישורים נוצרו';
+        setTimeout(() => this.innerHTML = '<i class="fas fa-link"></i> צור קישורי חיפוש', 1500);
+        showAlert('קישורי חיפוש נוצרו בהצלחה!');
+    });
+    
+    document.getElementById('reset-form').addEventListener('click', function() {
+        resetFreelancerForm();
+        showAlert('הטופס אופס בהצלחה');
+    });
+    
+    function resetFreelancerForm() {
+        selectedService = null;
+        document.querySelectorAll('.option-card').forEach(card => card.classList.remove('selected'));
+        document.getElementById('project-details').value = '';
+        document.getElementById('project-budget').value = '';
+        document.getElementById('project-timeline').value = 'urgent';
+        document.getElementById('search-results').innerHTML = '';
+    }
+    
+    function generateProfessionalDescription(service, details, budget, timeline) {
+        const serviceMap = {
+            design: 'Graphic Designer',
+            development: 'Web/Software Developer',
+            marketing: 'Digital Marketing Specialist',
+            writing: 'Content Writer/Editor',
+            other: 'Freelance Professional'
+        };
+        
+        const timelineMap = {
+            urgent: 'with an urgent deadline (within 1 week)',
+            short: 'within a short timeframe (1-2 weeks)',
+            medium: 'within a moderate timeframe (3-4 weeks)',
+            long: 'over an extended period (1 month or more)'
+        };
+        
+        const budgetText = budget ? ` Budget is approximately ${budget} ILS.` : ' Budget is flexible.';
+        
+        return `Seeking a highly skilled ${serviceMap[service]} for a project involving: ${details}. The ideal candidate should deliver exceptional quality, demonstrate expertise in relevant tools and techniques, and meet deadlines ${timelineMap[timeline]}.${budgetText} Looking for professionalism, creativity, and effective communication throughout the process.`;
+    }
+    
+    function generateLink(platform, description, budget) {
+        const encodedDescription = encodeURIComponent(description);
+        if (platform === 'upwork') {
+            const budgetParam = budget ? `&budget=${budget}` : '';
+            return `https://www.upwork.com/nx/find-work/?q=${encodedDescription}${budgetParam}`;
+        } else if (platform === 'fiverr') {
+            const budgetParam = budget ? `&max_price=${budget}` : '';
+            return `https://www.fiverr.com/search/gigs?query=${encodedDescription}${budgetParam}`;
+        }
+        return '#';
+    }
+
+    // Initialization
+    renderExpenses();
+    const randomIndex = Math.floor(Math.random() * motivationQuotes.length);
+    document.getElementById('motivation-quote').textContent = motivationQuotes[randomIndex];
+</script>
+
+</body>
+</html>
+
